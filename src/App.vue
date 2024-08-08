@@ -7,7 +7,7 @@
       :todo="todo" 
       @delete-todo="handleDeleteTodo" 
       @complete-todo="handleCompleteTodo" 
-    />
+    ></todo-list>
   </div>
 </template>
 
@@ -35,20 +35,34 @@ export default {
   },
 
   components: {
-    TodoList: {
-      props: {
-        todo: { type: Object, required: true }
-      },
-      emits: ['delete-todo', 'complete-todo'],
+    TodoList: { 
       template: `
         <div :class="[todo.isComplete ? 'success' : 'error', 'todo-wrapper']">
           <div class="todo-title">{{ todo.title }}</div>
           <div class="todo-icons">
-            <i class="fa fa-check" aria-hidden="true" @click="$emit('complete-todo')"></i>
-            <i class="fa fa-trash-alt" aria-hidden="true" @click="$emit('delete-todo')"></i>
+            <i class="fa fa-check" aria-hidden="true" @click="completeTodo"></i>
+            <i class="fa fa-trash-alt" aria-hidden="true" @click="deleteTodo"></i>
           </div>
         </div>
-      `
+      `,
+      props: {
+        todo: { 
+          type: Object, 
+          required: true 
+        }
+      },
+      methods: {
+        deleteTodo() {
+          this.$emit("delete-todo", {
+            title: this.todo.title
+          });
+        },
+        completeTodo() {
+          this.$emit("complete-todo", {
+            title: this.todo.title
+          });
+        }
+      }
     }
   }
 };
