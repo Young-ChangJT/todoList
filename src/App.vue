@@ -1,127 +1,81 @@
 <template>
   <div id="app">
-    <h1>Todo List</h1>
-    <todo-list 
-      v-for="(todo, index) in todos" 
-      :key="index" 
-      :todo="todo" 
-      @delete-todo="handleDeleteTodo" 
-      @complete-todo="handleCompleteTodo" 
-    ></todo-list>
+    <div class="container">
+      <label for="inputTodo">請輸入待辦事項：</label>
+      <input v-model.trim="inputItem" id="inputTodo" type="text"/>
+      <button @click="createItem" type="button">加入</button>
+      <div class="inputs">
+        <input type="radio" id="all" value="all" v-model="todoStatus" />
+        <label for="all">All</label>
+        <input
+          type="radio"
+          id="complete"
+          value="complete"
+          v-model="todoStatus"
+        />
+        <label for="complete">Complete</label>
+        <input
+          type="radio"
+          id="incomplete"
+          value="incomplete"
+          v-model="todoStatus"
+        />
+        <label for="incomplete">Incomplete</label>
+      </div>
+      <TodoCard
+        :todoProps="todo"
+        v-for="todo in todos"
+        :key="todo.id"
+      ></TodoCard>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import TodoCard from "@/components/TodoCard.vue";
+import { mapGetters } from "vuex";
 
 export default {
-  setup() {
-    const todos = ref([
-      { title: "Get dressed", isComplete: false },
-      { title: "Buy food", isComplete: false },
-      { title: "Eat lunch", isComplete: true },
-      { title: "Write Article", isComplete: true }
-    ]);
-
-    function handleDeleteTodo(index) {
-      todos.value.splice(index, 1);
-    }
-
-    function handleCompleteTodo(index) {
-      todos.value[index].isComplete = !todos.value[index].isComplete;
-    }
-
-    return { todos, handleDeleteTodo, handleCompleteTodo };
+  components: { TodoCard },
+  data() {
+    return {
+      todoStatus: "all",
+      inputItem: "",
+    };
   },
-
-  components: {
-    TodoList: { 
-      template: `
-        <div :class="[todo.isComplete ? 'success' : 'error', 'todo-wrapper']">
-          <div class="todo-title">{{ todo.title }}</div>
-          <div class="todo-icons">
-            <i class="fa fa-check" aria-hidden="true" @click="completeTodo"></i>
-            <i class="fa fa-trash-alt" aria-hidden="true" @click="deleteTodo"></i>
-          </div>
-        </div>
-      `,
-      props: {
-        todo: { 
-          type: Object, 
-          required: true 
-        }
-      },
-      methods: {
-        deleteTodo() {
-          this.$emit("delete-todo", {
-            title: this.todo.title
-          });
-        },
-        completeTodo() {
-          this.$emit("complete-todo", {
-            title: this.todo.title
-          });
-        }
+  computed: {
+    ...mapGetters({ allTodos: "getTodos", note: "Note/getNote" }),
+    todos() {
+      let result;
+      switch (this.todoStatus) {
+        case "all":
+          result = this.allTodos;
+          break;
+        case "complete":
+          result = this.allTodos.filter((todo) => todo.complete);
+          break;
+        case "incomplete":
+          result = this.allTodos.filter((todo) => !todo.complete);
+          break;
+        // no default
       }
-    }
-  }
+      return result;
+    },
+  },
+  methods: {
+    createItem() {
+      this.$store.dispatch("createItem", this.inputItem);
+      this.inputItem = "";
+    },
+  },
 };
 </script>
-
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+<style lang="scss">
+.inputs {
+  margin-bottom: 30px;
 }
-
-body {
-  height: 100vh;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.fa-trash-alt {
-  color: red;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.fa-check {
-  color: green;
-  margin-right: 5px;
-}
-
-.todo-wrapper {
-  display: flex;
-  justify-content: space-between;
-  border-radius: 16px;
-  box-shadow: 5px 0 5px rgba(0, 0, 0, 0.5);
-  width: 270px;
-  padding: 1.5rem 0.8rem;
-  margin-top: 0.3rem;
-}
-
-.todo-title {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.todo-icons {
-  display: flex;
-  cursor: pointer;
-}
-
-.success {
-  border-left: 40px solid green;
-}
-
-.error {
-  border-left: 40px solid red;
+.container {
+  width: 500px;
+  margin: 0 auto;
 }
 </style>
