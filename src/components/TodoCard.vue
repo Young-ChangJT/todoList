@@ -1,7 +1,6 @@
 <template>
-    <div>
-      <input
-        
+    <div class="todo-title">
+      <input     
         :checked="todo.complete"
         @change="changeComplete(todo.id)"
         type="checkbox"
@@ -37,4 +36,13 @@
   </script>
   
   <style>
+  .todo-title {
+    display: flex;
+    justify-content: space-between;
+    border-radius: 16px;
+    box-shadow: 5px 0 5px rgba(0, 0, 0, 0.5);
+    width: 270px;
+    padding: 1.5rem 0.8rem;
+    margin-top: 0.3rem;
+  }
   </style>

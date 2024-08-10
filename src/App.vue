@@ -22,11 +22,13 @@
         />
         <label for="incomplete">Incomplete</label>
       </div>
-      <TodoCard
-        :todoProps="todo"
-        v-for="todo in todos"
-        :key="todo.id"
-      ></TodoCard>
+      <div class="todo-wrapper">
+        <TodoCard
+          :todoProps="todo"
+          v-for="todo in todos"
+          :key="todo.id"
+        ></TodoCard>
+      </div>
     </div>
   </div>
 </template>
@@ -72,10 +74,26 @@ export default {
 </script>
 <style lang="scss">
 .inputs {
-  margin-bottom: 30px;
+  // display: flex;
+  // justify-content: space-between;
+  // border-radius: 16px;
+  // box-shadow: 5px 0 5px rgba(0, 0, 0, 0.5);
+  // width: 270px;
+  // padding: 1.5rem 0.8rem;
+  margin: 1rem;
 }
 .container {
   width: 500px;
   margin: 0 auto;
 }
+// .todo-wrapper {
+//   display: flex;
+//   justify-content: space-between;
+//   border-radius: 16px;
+//   box-shadow: 5px 0 5px rgba(0, 0, 0, 0.5);
+//   width: 270px;
+//   padding: 1.5rem 0.8rem;
+//   margin-top: 0.3rem;
+// }
+
 </style>
